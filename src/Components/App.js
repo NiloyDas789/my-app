@@ -1,22 +1,9 @@
-// import './App.css';
-
-// import React from 'react';
-// import Counter from './Counter';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <h1>Hello World</h1>
-//       <Counter />
-//     </div>
-//   );
-// }
-
-// export default App;
-
 import { useState } from 'react';
 import '../reset.css';
 import '../App.css';
+import TodoForm from './TodoForm.jsx';
+import NoTodos from './NoTodos.jsx';
+import TodoList from './TodoList';
 
 function App() {
   const [todos, setTodos] = useState([
@@ -24,101 +11,102 @@ function App() {
       id: 1,
       title: 'Finish React Series',
       isComplete: false,
+      isEditing: false,
     },
     {
       id: 2,
       title: 'Go Grocery',
       isComplete: true,
+      isEditing: false,
     },
     {
       id: 3,
       title: 'Take over world',
       isComplete: false,
+      isEditing: false,
     },
   ]);
-  const [todoInput, setTodoInputs] = useState('');
+
   const [idForTodo, setIdForTodo] = useState(4);
 
-  function handleInput(event) {
-    setTodoInputs(event.target.value);
+  function deleteTodo(id) {
+    setTodos([...todos].filter(todo => todo.id != id));
   }
 
-  function addTodos(event) {
-    event.preventDefault();
-    if (todoInput.trim().length === 0) {
-      return;
-    }
+  function addTodo(todo) {
     setTodos([
       ...todos,
       {
         id: idForTodo,
-        title: todoInput,
+        title: todo,
         isComplete: false,
+        isEditing: false,
       },
     ]);
-    setTodoInputs('');
     setIdForTodo(previousIdForTodo => previousIdForTodo + 1);
+  }
+  function completeTodo(id) {
+    const updateTodos = todos.map(todo => {
+      if (todo.id === id) {
+        todo.isComplete = !todo.isComplete;
+      }
+      return todo;
+    });
+    setTodos(updateTodos);
+  }
+
+  function markAsEditing(id) {
+    const updateTodos = todos.map(todo => {
+      if (todo.id === id) {
+        todo.isEditing = true;
+      }
+      return todo;
+    });
+    setTodos(updateTodos);
+  }
+
+  function updateTodo(event, id) {
+    const updateTodos = todos.map(todo => {
+      if (todo.id === id) {
+        if (event.target.value.trim().length === 0) {
+          todo.isEditing = false;
+          return todo;
+        }
+        todo.title = event.target.value;
+        todo.isEditing = false;
+      }
+      return todo;
+    });
+    setTodos(updateTodos);
+  }
+
+  function cancelEditing(id) {
+    const updateTodos = todos.map(todo => {
+      if (todo.id === id) {
+        todo.isEditing = false;
+      }
+      return todo;
+    });
+    setTodos(updateTodos);
   }
 
   return (
     <div className="todo-app-container">
       <div className="todo-app">
         <h2>Todo App</h2>
-        <form action="#" onSubmit={addTodos}>
-          <input
-            type="text"
-            className="todo-input"
-            value={todoInput}
-            onChange={handleInput}
-            placeholder="What do you need to do?"
+        <TodoForm addTodo={addTodo} />
+        {todos.length > 0 ? (
+          <TodoList
+            todos={todos}
+            completeTodo={completeTodo}
+            markAsEditing={markAsEditing}
+            updateTodo={updateTodo}
+            cancelEditing={cancelEditing}
+            deleteTodo={deleteTodo}
           />
-        </form>
-
-        <ul className="todo-list">
-          {todos.map((todo, index) => (
-            <li className="todo-item-container">
-              <div className="todo-item">
-                <input type="checkbox" />
-                <span className="todo-item-label">{todo.title}</span>
-                {/* <input type="text" className="todo-item-input" value="Finish React Series" /> */}
-              </div>
-              <button className="x-button">
-                <svg
-                  className="x-button-icon"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        <div className="check-all-container">
-          <div>
-            <div className="button">Check All</div>
-          </div>
-          <span>3 items remaining</span>
-        </div>
-        <div className="other-buttons-container">
-          <div>
-            <button className="button filter-button filter-button-active">
-              All
-            </button>
-            <button className="button filter-button">Active</button>
-            <button className="button filter-button">Completed</button>
-          </div>
-          <div>
-            <button className="button">Clear completed</button>
-          </div>
-        </div>
+        ) : (
+          <NoTodos />
+        )}
       </div>
     </div>
   );
