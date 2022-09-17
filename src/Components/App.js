@@ -29,11 +29,11 @@ function App() {
 
   const [idForTodo, setIdForTodo] = useState(4);
 
-  function deleteTodo(id) {
-    setTodos([...todos].filter(todo => todo.id != id));
-  }
+  let deleteTodo = id => {
+    setTodos([...todos].filter(todo => todo.id !== id));
+  };
 
-  function addTodo(todo) {
+  let addTodo = todo => {
     setTodos([
       ...todos,
       {
@@ -44,8 +44,8 @@ function App() {
       },
     ]);
     setIdForTodo(previousIdForTodo => previousIdForTodo + 1);
-  }
-  function completeTodo(id) {
+  };
+  let completeTodo = id => {
     const updateTodos = todos.map(todo => {
       if (todo.id === id) {
         todo.isComplete = !todo.isComplete;
@@ -53,9 +53,9 @@ function App() {
       return todo;
     });
     setTodos(updateTodos);
-  }
+  };
 
-  function markAsEditing(id) {
+  let markAsEditing = id => {
     const updateTodos = todos.map(todo => {
       if (todo.id === id) {
         todo.isEditing = true;
@@ -63,9 +63,9 @@ function App() {
       return todo;
     });
     setTodos(updateTodos);
-  }
+  };
 
-  function updateTodo(event, id) {
+  let updateTodo = (event, id) => {
     const updateTodos = todos.map(todo => {
       if (todo.id === id) {
         if (event.target.value.trim().length === 0) {
@@ -78,9 +78,9 @@ function App() {
       return todo;
     });
     setTodos(updateTodos);
-  }
+  };
 
-  function cancelEditing(id) {
+  let cancelEditing = id => {
     const updateTodos = todos.map(todo => {
       if (todo.id === id) {
         todo.isEditing = false;
@@ -88,7 +88,30 @@ function App() {
       return todo;
     });
     setTodos(updateTodos);
-  }
+  };
+  let remaining = () => {
+    return todos.filter(todo => !todo.isComplete).length;
+  };
+  let clearCompleted = () => {
+    setTodos([...todos].filter(todo => !todo.isComplete));
+  };
+  let checkAll = () => {
+    setTodos(
+      [...todos].map(todo => {
+        todo.isComplete = true;
+        return todo;
+      })
+    );
+  };
+  let todosFiltered = filter => {
+    if (filter === 'all') {
+      return todos;
+    } else if (filter === 'active') {
+      return todos.filter(todo => !todo.isComplete);
+    } else if (filter === 'completed') {
+      return todos.filter(todo => todo.isComplete);
+    }
+  };
 
   return (
     <div className="todo-app-container">
@@ -103,6 +126,10 @@ function App() {
             updateTodo={updateTodo}
             cancelEditing={cancelEditing}
             deleteTodo={deleteTodo}
+            remaining={remaining}
+            clearCompleted={clearCompleted}
+            checkAll={checkAll}
+            todosFiltered={todosFiltered}
           />
         ) : (
           <NoTodos />
