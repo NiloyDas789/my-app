@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 ClearCompleted.propTypes = {
-  ClearCompleted: PropTypes.func.isRequired,
+  ClearCompleted: PropTypes.func,
 };
 function ClearCompleted(props) {
   const { clearCompleted } = props;

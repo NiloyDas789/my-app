@@ -13,7 +13,7 @@ TodoList.propTypes = {
   updateTodo: PropTypes.func.isRequired,
   cancelEditing: PropTypes.func.isRequired,
   deleteTodo: PropTypes.func.isRequired,
-  remaining: PropTypes.func.isRequired,
+  remaining: PropTypes.number.isRequired,
   clearCompleted: PropTypes.func.isRequired,
   checkAll: PropTypes.func.isRequired,
   todosFiltered: PropTypes.func.isRequired,
@@ -32,7 +32,6 @@ function TodoList(props) {
     todosFiltered,
   } = props;
   const [filter, setFilter] = useState('all');
-  console.log(todosFiltered(filter), filter);
 
   return (
     <>

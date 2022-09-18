@@ -4,8 +4,13 @@ import '../App.css';
 import TodoForm from './TodoForm.jsx';
 import NoTodos from './NoTodos.jsx';
 import TodoList from './TodoList';
+import { useRef } from 'react';
+import { useEffect } from 'react';
+import { useMemo } from 'react';
 
 function App() {
+  const [name, setName] = useState('');
+  const nameInputEl = useRef(null);
   const [todos, setTodos] = useState([
     {
       id: 1,
@@ -45,6 +50,7 @@ function App() {
     ]);
     setIdForTodo(previousIdForTodo => previousIdForTodo + 1);
   };
+
   let completeTodo = id => {
     const updateTodos = todos.map(todo => {
       if (todo.id === id) {
@@ -89,12 +95,18 @@ function App() {
     });
     setTodos(updateTodos);
   };
-  let remaining = () => {
+
+  let remainingCalculation = () => {
+    console.log('Calculating remaining todos.This is slow');
+    // for (let index = 0; index < 20000000000; index++) {}
     return todos.filter(todo => !todo.isComplete).length;
   };
+  const remaining = useMemo(remainingCalculation, [todos]);
+
   let clearCompleted = () => {
     setTodos([...todos].filter(todo => !todo.isComplete));
   };
+
   let checkAll = () => {
     setTodos(
       [...todos].map(todo => {
@@ -103,6 +115,7 @@ function App() {
       })
     );
   };
+
   let todosFiltered = filter => {
     if (filter === 'all') {
       return todos;
@@ -113,9 +126,28 @@ function App() {
     }
   };
 
+  useEffect(() => nameInputEl.current.focus(), []);
+
   return (
     <div className="todo-app-container">
       <div className="todo-app">
+        <div className="name-container">
+          <div className="name-label">
+            {' '}
+            <h2>Name</h2>{' '}
+          </div>
+          <form action="#">
+            <input
+              type="text"
+              value={name}
+              className="todo-input"
+              ref={nameInputEl}
+              onChange={event => setName(event.target.value)}
+              placeholder="What is your name"
+            />
+          </form>
+          {name && <p className="name-label"> Hello , {name}</p>}
+        </div>
         <h2>Todo App</h2>
         <TodoForm addTodo={addTodo} />
         {todos.length > 0 ? (
