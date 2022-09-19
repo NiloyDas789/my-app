@@ -8,6 +8,7 @@ import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useMemo } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
+import { TodosContext } from '../context/TodosContext';
 
 function App() {
   // const [name, setName] = useState('');
@@ -121,45 +122,47 @@ function App() {
   };
 
   return (
-    <div className="todo-app-container">
-      <div className="todo-app">
-        <div className="name-container">
-          <div className="name-label">
-            {' '}
-            <h2>Name</h2>{' '}
+    <TodosContext.Provider value="Hello , world">
+      <div className="todo-app-container">
+        <div className="todo-app">
+          <div className="name-container">
+            <div className="name-label">
+              {' '}
+              <h2>Name</h2>{' '}
+            </div>
+            <form action="#">
+              <input
+                type="text"
+                value={name}
+                className="todo-input"
+                ref={nameInputEl}
+                onChange={handleNameInput}
+                placeholder="What is your name"
+              />
+            </form>
+            {name && <p className="name-label"> Hello , {name}</p>}
           </div>
-          <form action="#">
-            <input
-              type="text"
-              value={name}
-              className="todo-input"
-              ref={nameInputEl}
-              onChange={handleNameInput}
-              placeholder="What is your name"
+          <h2>Todo App</h2>
+          <TodoForm addTodo={addTodo} />
+          {todos.length > 0 ? (
+            <TodoList
+              todos={todos}
+              completeTodo={completeTodo}
+              markAsEditing={markAsEditing}
+              updateTodo={updateTodo}
+              cancelEditing={cancelEditing}
+              deleteTodo={deleteTodo}
+              remaining={remaining}
+              clearCompleted={clearCompleted}
+              checkAll={checkAll}
+              todosFiltered={todosFiltered}
             />
-          </form>
-          {name && <p className="name-label"> Hello , {name}</p>}
+          ) : (
+            <NoTodos />
+          )}
         </div>
-        <h2>Todo App</h2>
-        <TodoForm addTodo={addTodo} />
-        {todos.length > 0 ? (
-          <TodoList
-            todos={todos}
-            completeTodo={completeTodo}
-            markAsEditing={markAsEditing}
-            updateTodo={updateTodo}
-            cancelEditing={cancelEditing}
-            deleteTodo={deleteTodo}
-            remaining={remaining}
-            clearCompleted={clearCompleted}
-            checkAll={checkAll}
-            todosFiltered={todosFiltered}
-          />
-        ) : (
-          <NoTodos />
-        )}
       </div>
-    </div>
+    </TodosContext.Provider>
   );
 }
 export default App;
