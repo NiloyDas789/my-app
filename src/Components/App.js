@@ -7,32 +7,16 @@ import TodoList from './TodoList';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useMemo } from 'react';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 function App() {
-  const [name, setName] = useState('');
-  const nameInputEl = useRef(null);
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      title: 'Finish React Series',
-      isComplete: false,
-      isEditing: false,
-    },
-    {
-      id: 2,
-      title: 'Go Grocery',
-      isComplete: true,
-      isEditing: false,
-    },
-    {
-      id: 3,
-      title: 'Take over world',
-      isComplete: false,
-      isEditing: false,
-    },
-  ]);
+  // const [name, setName] = useState('');
+  const [name, setName] = useLocalStorage('name', '');
 
-  const [idForTodo, setIdForTodo] = useState(4);
+  const nameInputEl = useRef(null);
+  const [todos, setTodos] = useLocalStorage('todos', []);
+
+  const [idForTodo, setIdForTodo] = useLocalStorage('idForTodo', 1);
 
   let deleteTodo = id => {
     setTodos([...todos].filter(todo => todo.id !== id));
@@ -126,7 +110,15 @@ function App() {
     }
   };
 
-  useEffect(() => nameInputEl.current.focus(), []);
+  useEffect(() => {
+    nameInputEl.current.focus();
+    // setName(JSON.parse(localStorage.getItem('name')) ?? '');
+  }, []);
+  const handleNameInput = event => {
+    setName(event.target.value);
+    // localStorage.setItem('name', JSON.stringify(event.target.value));
+    console.log(localStorage.value);
+  };
 
   return (
     <div className="todo-app-container">
@@ -142,7 +134,7 @@ function App() {
               value={name}
               className="todo-input"
               ref={nameInputEl}
-              onChange={event => setName(event.target.value)}
+              onChange={handleNameInput}
               placeholder="What is your name"
             />
           </form>

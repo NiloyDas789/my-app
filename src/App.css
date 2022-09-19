@@ -227,3 +227,6 @@ nav ul li:not(:first-child) {
   transition: all 300ms;
   transform: translateX(20px);
 }
+.toggles-container{
+  margin-top: 30px;
+}
